@@ -29,48 +29,60 @@ void data_getline(std::string fileName, std::vector<LogItem>& logs)
         while(getline(file, line))
         {   
             LogItem item;
+            //记录寻找的“|”个数
             count = 0;
+            //前位置
             loc_head = 0;
+            //后位置
             loc_hind = 0; 
-            loc_hind = line.find("|", loc_hind);
-            
-            //日志时间单独处理
-            if(loc_hind != std::string::npos)
-            {
-                //时间
-                item.timestamp = line.substr(0, loc_hind-1);
-            }
-            loc_hind++;
 
-            /*2026-09-20 22:43:24 | ERROR | user_955 | pay | 52ms | 502
-            时间与其他字符处理进行单独处理*/
-            while(count < 4)
+            //2026-09-20 22:43:24 | ERROR | user_955 | pay | 52ms | 502
+            while(count < 5)
             {
-                loc_head = loc_hind;          
+                //此时loc_hind位于下一个截取字段前的空格处，loc_head也是
+                loc_head = loc_hind; 
+                //寻找“|”的位置     
                 loc_hind = line.find("|", loc_hind); 
                 switch (count)
                 {
-                    case 0:     //级别
+                    case 0:
+                        //时间解析：从0号位开始读取，“|”位置在loc_hind下标处，
+                        //时间的最后一个字符和“|”中间还有一个空格，算上“|”一共两个多余字符，
+                        //因为下标本来就少1，所以再减1，即得正确截取长度
+                        item.timestamp = line.substr(0, loc_hind-1);
+                        break;
+                    case 1:     //级别
+                        //loc_head+1，使得substr的开始读取位置变为下一个字段的开头
+                        //此时loc_hind寻找到“|”的位置，位于“|”处，减去（loc_head+1）和 1 后得到要截取的字符串长度
                         item.level = line.substr(loc_head+1, loc_hind-2-loc_head);
                         break;
-                    case 1:     //ID
+                    case 2:     //ID
+                        //同上
                         item.user_id = line.substr(loc_head+1, loc_hind-2-loc_head);
                         break;
-                    case 2:     //动作
+                    case 3:     //动作
+                        //同上
                         item.action = line.substr(loc_head+1, loc_hind-2-loc_head);
                         break;
-                    case 3:     //耗时
+                    case 4:     //耗时
+                        //因为耗时的单位为 ms ，而接收变量类型为 int 所以要减 2 去掉 ms
+                        //stoi可以将字符串转换成数字
+                        //其余同上
                         item.latency_ms = std::stoi(line.substr(loc_head+1, loc_hind-4-loc_head));
                         break;
                     default:
                         std::cout << "出现错误！！！" << std::endl;
                         break;
                 }
+                //让loc_hind往后一位，寻找下一个“|”
                 loc_hind++;
                 count++;
             }
             //日志错误码单独处理
+            //因为在处理完耗时字段后，又loc_hind++, 所以此时loc_hind 位于错误码前的空格
+            //substr(++loc_hind)即可让loc_hind位置变为错误码的第一位，不加截取长度，默认截取到字符串末尾
             item.error_code = std::stoi(line.substr(++loc_hind));
+            //压入vector容器
             logs.push_back(item);
         }
         file.close();
@@ -102,7 +114,7 @@ int main()
     std::string fileName = "../Data/app.log";
     data_getline(fileName, logs);
 
-    //vecprint(logs);
+    vecprint(logs);
 
     return 0;
 }
