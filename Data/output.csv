@@ -1,0 +1,21 @@
+timestamp,level,user_id,action,latency_ms,error_code
+2026-09-20 22:42:58,WARN,user_939,add_cart,58,0
+2026-09-20 22:42:59,WARN,user_779,view_item,915,0
+2026-09-20 22:43:01,INFO,user_150,view_item,92,0
+2026-09-20 22:43:02,INFO,user_600,login,89,0
+2026-09-20 22:43:03,INFO,user_283,pay,25,0
+2026-09-20 22:43:04,INFO,user_308,view_item,64,0
+2026-09-20 22:43:06,INFO,user_742,view_item,51,0
+2026-09-20 22:43:09,INFO,user_404,login,97,0
+2026-09-20 22:43:12,INFO,user_255,add_cart,71,0
+2026-09-20 22:43:15,INFO,user_118,pay,32,0
+2026-09-20 22:43:16,ERROR,user_913,pay,57,502
+2026-09-20 22:43:19,INFO,user_288,add_cart,26,0
+2026-09-20 22:43:20,INFO,user_512,add_cart,22,0
+2026-09-20 22:43:23,INFO,user_348,login,1027,0
+2026-09-20 22:43:24,ERROR,user_955,pay,52,502
+2026-09-20 22:43:26,INFO,user_384,view_item,76,0
+2026-09-20 22:43:29,INFO,user_539,add_cart,77,0
+2026-09-20 22:43:32,INFO,user_564,add_cart,1166,0
+2026-09-20 22:43:33,INFO,user_278,pay,62,0
+2026-09-20 22:43:35,INFO,user_935,login,32,0

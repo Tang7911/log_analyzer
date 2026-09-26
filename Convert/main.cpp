@@ -12,9 +12,10 @@ struct LogItem{
     int error_code;             //错误码（整数）
 };
 
+//日志处理并存入vector容器
 void data_getline(std::string fileName, std::vector<LogItem>& logs)
 {
-    //读取数据
+    //打开读取文件
     std::ifstream file(fileName);
     //检查文件是否打开
     if(file.is_open())
@@ -93,6 +94,34 @@ void data_getline(std::string fileName, std::vector<LogItem>& logs)
     }
 }
 
+//写入csv
+void write_to_csv(const std::vector<LogItem>& logs, const std::string& fileName)
+{
+    //打开写入文件
+    std::ofstream out_file(fileName);
+    if(out_file.is_open())
+    {
+        //创建csv表头
+        out_file << "timestamp,level,user_id,action,latency_ms,error_code" << "\n";
+        //循环写入csv
+        for(const auto& item : logs)
+        {
+            out_file << item.timestamp << ","
+                     << item.level << ","
+                     << item.user_id << ","
+                     << item.action << ","
+                     << item.latency_ms << ","
+                     << item.error_code << "\n";
+        }
+        //关闭文件
+        out_file.close();
+    }
+    else
+    {
+        std::cout << "无法打开文件" << std::endl;
+    }
+}
+
 //vector验证
 void vecprint(const std::vector<LogItem>& logs)
 {
@@ -114,7 +143,10 @@ int main()
     std::string fileName = "../Data/app.log";
     data_getline(fileName, logs);
 
-    vecprint(logs);
+    write_to_csv(logs, "../Data/output.csv");
+    std::cout << "csv 文件写入完成！" <<std::endl;
+
+    //vecprint(logs);
 
     return 0;
 }
