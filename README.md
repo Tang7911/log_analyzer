@@ -69,7 +69,7 @@ log_analyzer __________________________
 ![Action Distribution](./Data/action_bar.png)
 
 ### 耗时分布
-![Latency Distribution](./Data/latency_his.png)
+![Latency Distribution](./Data/latency_hist.png)
 
 ### 日志量时间趋势
 ![Time Trend](./Data/timestamp_error.png)
