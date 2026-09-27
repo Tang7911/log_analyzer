@@ -9,7 +9,7 @@ action = ["login", "view_item", "add_cart", "pay"]
 error_codes = [404, 500, 502, 403]
 
 #生成日志条数
-total_lines = 20
+total_lines = 1000
 #写入文件，自动关闭文件回收资源
 with open("app.log", "w", encoding="utf-8") as f:
     for i in range(total_lines):

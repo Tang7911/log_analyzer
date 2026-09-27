@@ -1,1 +1,4 @@
 .venv/
+Data/output.csv
+Data/app.log
+*.log
