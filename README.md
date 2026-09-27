@@ -19,6 +19,7 @@
 
 ## 目录结构
 
+```text
 log_analyzer __________________________
             |
             |_Analysis_________________
@@ -40,37 +41,38 @@ log_analyzer __________________________
             |_gitignore
             |_jiagou.png
             |_README.md
+```
 
 ## 快速开始
 
 ### 1. 生成模拟日志
-'''bash
+```bash
     python generate_logs.py
-'''
+```
 
 ### 2. 编译并运行 C++ 编译器
-'''bash
+```bash
     g++ main.cpp -o main
-'''
+```
 
 ### 3. 运行 Python 分析
-'''bash
+```bash
     用 jupyter notebook 运行 analyze.ipynb
-'''
+```
 
 ## 数据展示
 
 ### 日志级别分布
-![Level Distribution](../Data/level_pie.png)
+![Level Distribution](./Data/level_pie.png)
 
 ### 动作调用统计
-![Action Distribution](../Data/action_bar.png)
+![Action Distribution](./Data/action_bar.png)
 
 ### 耗时分布
-![Latency Distribution](../Data/latency_hist.png)
+![Latency Distribution](./Data/latency_his.png)
 
 ### 日志量时间趋势
-![Time Trend](../Data/timestamp_error.png)
+![Time Trend](./Data/timestamp_error.png)
 
 ## 后续计划
 
