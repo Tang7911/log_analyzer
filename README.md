@@ -4,8 +4,8 @@
 
 ## 功能特性
 
-- **C++ 高性能解析**：读取非结构化日志文件，逐行精准截取字段，存入 `vector` 容器，并转换为结构化 CSV 格式。
-- **轻量级持久化**：目前数据保存在 CSV 文件内，后续计划接入 SQLite 实现更复杂的查询。
+- **C++ 高性能解析**：读取非结构化日志文件，逐行精准截取字段，存入 `vector` 容器，并转换为结构化 SQlite 格式。
+- **轻量级持久化**：目前数据保存在 SQLite 数据库内。
 - **Python 数据分析**：利用 Pandas 进行多维度统计（如 P95 延迟、错误率），利用 Matplotlib 生成可视化图表。
 - **端到端链路**：包含日志生成、采集、存储、分析、可视化的完整闭环。
 
@@ -17,6 +17,7 @@
 
 - **核心语言**：C++、Python
 - **数据处理**：Pandas、Matplotlib
+- **数据存储**：SQLite
 - **运行环境**：Linux
 
 ## 目录结构
@@ -37,8 +38,10 @@ log_analyzer
 │   ├── level_pie.png         # 可视化图表：日志级别分布
 │   ├── action_bar.png        # 可视化图表：动作调用统计
 │   ├── latency_his.png       # 可视化图表：耗时分布直方图
-│   └── timestamp_error.png   # 可视化图表：日志时间趋势
+│   |── timestamp_error.png   # 可视化图表：日志时间趋势
+|   └── logs_output.db        # SQLite 数据库存储文件
 │
+├── SQLiteCpp                 # SQLiteCpp 开源库  
 ├── .gitignore
 ├── jiagou.png                # 系统架构图
 └── README.md
@@ -53,7 +56,7 @@ log_analyzer
 
 ### 2. 编译并运行 C++ 编译器
 ```bash
-    g++ Convert/main.cpp -o Convert/main
+    g++ Convert/main.cpp -o Convert/main -lSQLiteCpp -lsqlite3
     ./Convert/main
 ```
 
@@ -78,7 +81,6 @@ log_analyzer
 
 ## 后续计划
 
-- 增加 SQLite 存储，支持更复杂的 SQL 查询。
 - 基于滑动窗口实现异常日志的自动预警。
 - 引入 C++ 多线程（生产者-消费者模型）提升海量日志解析性能。
 
