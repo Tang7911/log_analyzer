@@ -81,3 +81,11 @@ log_analyzer
 - 增加 SQLite 存储，支持更复杂的 SQL 查询。
 - 基于滑动窗口实现异常日志的自动预警。
 - 引入 C++ 多线程（生产者-消费者模型）提升海量日志解析性能。
+
+## 第三方依赖
+
+本项目使用了以下开源库：
+
+| 库名 | 许可证 | 用途 |
+|------|--------|------|
+| [SQLiteCpp](https://github.com/SRombauts/SQLiteCpp) | MIT | SQLite 数据库 C++ 封装 |
