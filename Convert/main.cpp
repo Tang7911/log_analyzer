@@ -148,6 +148,14 @@ void write_sql(const std::vector<LogItem>& logs, const std::string& fileName)
         }
         transaction.commit();
         std::cout << "数据已存入数据库" << std::endl;
+        
+        //测试
+        /*SQLite::Statement query(db, "SELECT * FROM log_record");
+        while(query.executeStep())
+        {
+            std::cout << "time: " << query.getColumn(0).getString() << std::endl;
+        }
+        */
     }
     catch(const std::exception& e)
     {
