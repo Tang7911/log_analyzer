@@ -2,6 +2,7 @@
 #include<string>
 #include<fstream>
 #include<vector>
+#include<SQLiteCpp/SQLiteCpp.h>
 
 struct LogItem{
     std::string timestamp;      //时间
@@ -122,6 +123,38 @@ void write_to_csv(const std::vector<LogItem>& logs, const std::string& fileName)
     }
 }
 
+//写入SQLite
+void write_sql(const std::vector<LogItem>& logs, const std::string& fileName)
+{
+    try
+    {
+        SQLite::Database db(fileName, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE IF NOT EXISTS log_record (timestamp TEXT, level TEXT, user_id TEXT, action TEXT, latency_ms INTEGER, error_code INTEGER)");
+        
+        SQLite::Transaction transaction(db);
+        SQLite::Statement insert(db, "INSERT INTO log_record (timestamp, level, user_id, action, latency_ms, error_code) VALUES(?, ?, ?, ?, ?, ?)");
+
+        for(const auto& item : logs)
+        {
+            insert.bind(1, item.timestamp);
+            insert.bind(2, item.level);
+            insert.bind(3, item.user_id);
+            insert.bind(4, item.action);
+            insert.bind(5, item.latency_ms);
+            insert.bind(6, item.error_code);
+
+            insert.exec();
+            insert.reset();
+        }
+        transaction.commit();
+        std::cout << "数据已存入数据库" << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "异常：" << e.what() << std::endl;
+    }
+}
+
 //vector验证
 void vecprint(const std::vector<LogItem>& logs)
 {
@@ -143,8 +176,7 @@ int main()
     std::string fileName = "../Data/app.log";
     data_getline(fileName, logs);
 
-    write_to_csv(logs, "../Data/output.csv");
-    std::cout << "csv 文件写入完成！" <<std::endl;
+    write_sql(logs, "../Data/logs_output.db");
 
     //vecprint(logs);
 
