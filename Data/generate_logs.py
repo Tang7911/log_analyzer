@@ -29,9 +29,9 @@ with open("app.log", "w", encoding="utf-8") as f:
             time_consuming = random.randint(20, 100)
         
         #拼接生成日志
-        if result_probability < 0.05:
+        if result_probability < 0.5:
             log_lines = f"{formatted_time} | ERROR | user_{user_uid} | {user_action} | {time_consuming}ms | {random.choice(error_codes)}\n"
-        elif result_probability < 0.1:
+        elif result_probability < 0.6:
             log_lines = f"{formatted_time} | WARN | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
         else:
             log_lines = f"{formatted_time} | INFO | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
