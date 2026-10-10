@@ -8,6 +8,13 @@ action = ["login", "view_item", "add_cart", "pay"]
 #错误码组
 error_codes = [404, 500, 502, 403]
 
+#错误风暴时间
+storm_start = current_time + timedelta(minutes=30)
+storm_end = current_time + timedelta(minutes=60)
+
+format_start = storm_start.strftime("%Y-%m-%d %H:%M:%S")
+format_end = storm_end.strftime("%Y-%m-%d %H:%M:%S")
+
 #生成日志条数
 total_lines = 10000
 #写入文件，自动关闭文件回收资源
@@ -27,14 +34,23 @@ with open("app.log", "w", encoding="utf-8") as f:
             time_consuming = random.randint(800, 1500)
         else:
             time_consuming = random.randint(20, 100)
-        
-        #拼接生成日志
-        if result_probability < 0.5:
-            log_lines = f"{formatted_time} | ERROR | user_{user_uid} | {user_action} | {time_consuming}ms | {random.choice(error_codes)}\n"
-        elif result_probability < 0.6:
-            log_lines = f"{formatted_time} | WARN | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
+
+        if formatted_time >= format_start and formatted_time <= format_end:
+            #拼接生成日志
+            if result_probability < 0.5:
+                log_lines = f"{formatted_time} | ERROR | user_{user_uid} | {user_action} | {time_consuming}ms | {random.choice(error_codes)}\n"
+            elif result_probability < 0.6:
+                log_lines = f"{formatted_time} | WARN | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
+            else:
+                log_lines = f"{formatted_time} | INFO | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
         else:
-            log_lines = f"{formatted_time} | INFO | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
+            #拼接生成日志
+            if result_probability < 0.05:
+                log_lines = f"{formatted_time} | ERROR | user_{user_uid} | {user_action} | {time_consuming}ms | {random.choice(error_codes)}\n"
+            elif result_probability < 0.1:
+                log_lines = f"{formatted_time} | WARN | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
+            else:
+                log_lines = f"{formatted_time} | INFO | user_{user_uid} | {user_action} | {time_consuming}ms | 0\n"
 
         #写入日志
         f.write(log_lines)
