@@ -11,7 +11,31 @@
 
 ## 🏗️ 系统架构
 
-![Architecture](jiagou.png)
+```mermaid
+graph TD
+    subgraph 数据生成层
+        A[Python 日志生成器] -->|注入错误风暴 / 长尾延迟| B(app.log 原始文本日志)
+    end
+
+    subgraph 采集与持久化层 C++
+        B -->|std::ifstream 逐行读取| C{C++ 高性能解析引擎}
+        C -->|find+substr 指针偏移切分| D[内存结构化数据池<br/>vector of LogItem]
+        D -->|SQLiteCpp 预编译语句 bind| E[(SQLite 数据库<br/>logs_output.db)]
+        E -.->|利用事务 Transaction 批量提交<br/>大幅降低磁盘 I/O| E
+    end
+
+    subgraph 分析与监控层 Python
+        E -->|sqlite3 直连 / read_sql_query| F{Pandas 数据分析中心}
+        
+        F -->|groupby / resample| G[多维指标聚合<br/>P95延迟 / 错误率 / 动作频次]
+        F -->|Matplotlib 绘图| H[可视化报表<br/>饼图 / 直方图 / 趋势图]
+        
+        F -->|按时间窗重采样| I[滑动窗口异常检测]
+        I -->|计算动态阈值<br/>Rolling Mean + k*Std| J{是否超过阈值?}
+        J -->|是| K[🚨 捕获突增风暴并标红告警]
+        J -->|否| L[保持正常监控]
+    end
+```
 
 ## 🛠️ 技术栈
 
