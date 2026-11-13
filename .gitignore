@@ -2,3 +2,4 @@
 Data/app.log
 *.log
 Data/logs_output.db
+Data/logs_output.parquet
