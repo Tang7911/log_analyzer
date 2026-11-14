@@ -46,13 +46,32 @@ print(action_ms_df)
 print(error_ratio_df)
 print(slow_ratio_df)
 
-df = level_counts_lf.collect()
-fig = px.bar(
-    df,
+df1 = level_counts_lf.collect()
+fig1 = px.bar(
+    df1,
     x="level",
     y="level_count",
     color="level",
     title="Log Level Distribution",
     color_discrete_sequence=px.colors.qualitative.Pastel
 )
-plotly_print.write_image(fig, "../Data/level_bar.png",scale=2)
+plotly_print.write_image(fig1, "../Data/level_bar.png",scale=2)
+
+df2 = action_counts_lf.collect()
+fig2 = px.bar(
+    df2,
+    x="action",
+    y="action_count",
+    color="action",
+    title="Log Action Distribution",
+    color_discrete_sequence=px.colors.qualitative.Pastel
+)
+plotly_print.write_image(fig2, "../Data/action_bar_pl.png", scale=2)
+
+df3 = lf.select("latency_ms").collect()
+fig3 = px.histogram(
+    df3,
+    x="latency_ms",
+    nbins=30
+)
+plotly_print.write_image(fig3, "../Data/latency_ms_hist_pl.png",scale=2)
