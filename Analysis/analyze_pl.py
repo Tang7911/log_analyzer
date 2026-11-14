@@ -1,5 +1,6 @@
 import polars as pl
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly_print
 
 parquet_path = "../Data/logs_output.parquet"
 lf = pl.scan_parquet(parquet_path)
@@ -44,3 +45,14 @@ print(latency_ms_df)
 print(action_ms_df)
 print(error_ratio_df)
 print(slow_ratio_df)
+
+df = level_counts_lf.collect()
+fig = px.bar(
+    df,
+    x="level",
+    y="level_count",
+    color="level",
+    title="Log Level Distribution",
+    color_discrete_sequence=px.colors.qualitative.Pastel
+)
+plotly_print.write_image(fig, "../Data/level_bar.png",scale=2)
