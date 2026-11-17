@@ -74,4 +74,33 @@ fig3 = px.histogram(
     x="latency_ms",
     nbins=30
 )
-plotly_print.write_image(fig3, "../Data/latency_ms_hist_pl.png",scale=2)
+plotly_print.write_image(fig3, "../Data/latency_ms_hist_pl.png", scale=2)
+
+error_lf = lf.filter(pl.col("level") == "ERROR")
+minute_counts = (
+    error_lf
+    .group_by(pl.col("timestamp").dt.truncate("1m").alias("time"))
+    .len()
+    .collect()
+)
+fig4 = px.line(
+    minute_counts,
+    x="time",
+    y="len",
+    title="Errors per minute"
+)
+fig4.update_layout(
+    xaxis_title="time",
+    yaxis_title="error_counts",
+    hovermode="x unified",
+    template="plotly_white"
+)
+fig4.update_xaxes(
+    tickformat="%H:%M",
+    dtick=30 * 60 * 1000,
+    tickangle=-45
+)
+fig4.update_yaxes(
+    rangemode="tozero"
+)
+plotly_print.write_image(fig4, "../Data/timestamp_error_pl.png", scale=2)
