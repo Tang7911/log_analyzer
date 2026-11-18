@@ -104,3 +104,25 @@ fig4.update_yaxes(
     rangemode="tozero"
 )
 plotly_print.write_image(fig4, "../Data/timestamp_error_pl.png", scale=2)
+
+agg = (
+    lf.with_columns((pl.col("level") == "ERROR").alias("is_error"))
+      .group_by_dynamic("timestamp", every="10m")
+      .agg(pl.col("is_error").sum().alias("error_count"))
+)
+bounds = lf.select(
+    pl.col("timestamp").min().dt.truncate("10m").alias("start"),
+    pl.col("timestamp").max().alias("end")
+).collect()
+grid = pl.DataFrame({
+    "timestamp": pl.datetime_range(
+        bounds["start"][0], bounds["end"][0], "10m", eager=True
+    )
+})
+result = (
+    grid.lazy()
+        .join(agg, on="timestamp", how="left")
+        .with_columns(pl.col("error_count").fill_null(0))
+        .collect(engine="streaming")
+)
+result.head()
