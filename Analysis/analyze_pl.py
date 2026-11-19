@@ -1,5 +1,6 @@
 import polars as pl
 import plotly.express as px
+import plotly.graph_objects as go
 import plotly_print
 
 parquet_path = "../Data/logs_output.parquet"
@@ -119,10 +120,41 @@ grid = pl.DataFrame({
         bounds["start"][0], bounds["end"][0], "10m", eager=True
     )
 })
-result = (
+df_result = (
     grid.lazy()
         .join(agg, on="timestamp", how="left")
         .with_columns(pl.col("error_count").fill_null(0))
+        .sort("timestamp", descending=False)
         .collect(engine="streaming")
 )
-result.head()
+print(df_result.head())
+
+window_size = 3
+df_result = (
+    df_result.with_columns(
+        pl.col("error_count").shift(1)
+          .rolling_mean(window_size=window_size, min_samples=1).alias("roll_mean"),
+        pl.col("error_count").shift(1)
+          .rolling_std(window_size=window_size, min_samples=1).alias("roll_std")
+    ).with_columns(
+        (pl.col("roll_mean") + 4 * pl.col("roll_std")).alias("threshold")
+    )
+)
+print(df_result.head())
+anomalies = (
+    df_result.filter(
+        pl.col("threshold").is_not_null() & (pl.col("error_count") > pl.col("threshold"))
+    ).select("timestamp", "error_count", "roll_mean", "roll_std", "threshold")
+)
+print(f"发现{anomalies.height}个异常时间点！！！")
+print(anomalies)
+
+fig5 = go.Figure()
+fig5.add_trace(go.Scatter(x=df_result["timestamp"], y=df_result["error_count"], name="Error_count"))
+fig5.add_trace(go.Scatter(x=df_result["timestamp"], y=df_result["threshold"], name="threshold"))
+fig5.update_layout(
+    title="Error Rate Anomaly Detection (Rolling Window)",
+    xaxis_title="Time",
+    yaxis_title="Error Count per 1min"
+)
+plotly_print.write_image(fig5, "../Data/anomaly_detection_pl.png", scale=2)
